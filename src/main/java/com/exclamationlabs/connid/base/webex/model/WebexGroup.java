@@ -1,30 +1,35 @@
 package com.exclamationlabs.connid.base.webex.model;
 
-import com.ciscospark.Team;
 import com.exclamationlabs.connid.base.connector.model.GroupIdentityModel;
 
 public class WebexGroup implements GroupIdentityModel {
 
-    private Team team;
-
-    public WebexGroup() {}
-
-    public WebexGroup(Team teamIn) {
-        team = teamIn;
-    }
+    private String id;
+    private String name;
 
     @Override
     public String getIdentityIdValue() {
-        return team.getId();
+        return getId();
     }
 
     @Override
     public String getIdentityNameValue() {
-        return team.getName();
+        return getName();
     }
 
-    public Team getTeam() {
-        return team;
+    public String getId() {
+        return id;
     }
 
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 }
