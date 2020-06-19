@@ -1,6 +1,22 @@
+/*
+    Copyright 2020 Exclamation Labs
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+        http://www.apache.org/licenses/LICENSE-2.0
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+*/
+
 package com.exclamationlabs.connid.base.webex;
 
-import com.exclamationlabs.connid.base.connector.util.ConnectorTestUtils;
+import com.exclamationlabs.connid.base.connector.configuration.ConfigurationConnector;
+import com.exclamationlabs.connid.base.connector.configuration.ConfigurationNameBuilder;
+import com.exclamationlabs.connid.base.connector.test.IntegrationTest;
+import com.exclamationlabs.connid.base.connector.test.util.ConnectorTestUtils;
 import com.exclamationlabs.connid.base.webex.attribute.WebexGroupAttribute;
 import com.exclamationlabs.connid.base.webex.attribute.WebexUserAttribute;
 import com.exclamationlabs.connid.base.webex.configuration.WebexConfiguration;
@@ -18,19 +34,23 @@ import static org.junit.Assert.*;
 import static org.junit.Assert.assertNotNull;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class WebexConnectorIntegrationTest {
+public class WebexConnectorIntegrationTest implements IntegrationTest {
 
     private WebexConnector connector;
 
     private static String generatedUserId;
     private static String testGroupId = "Y2lzY29zcGFyazovL3VzL1JPTEUvaWRfZnVsbF9hZG1pbg";
 
+    @Override
+    public String getConfigurationName() {
+        return new ConfigurationNameBuilder().withConnector(ConfigurationConnector.WEBEX).build();
+    }
+
     @Before
     public void setup() {
         connector = new WebexConnector();
-        WebexConfiguration configuration = new WebexConfiguration();
-        configuration.setMidPointConfigurationFilePath("src/test/resources/testWebexConfiguration.properties");
-        connector.init(configuration);
+        setup(connector, new WebexConfiguration(getConfigurationName()));
+
     }
 
     @Test
@@ -134,4 +154,5 @@ public class WebexConnectorIntegrationTest {
     public void test390UserDelete() {
         connector.delete(ObjectClass.ACCOUNT, new Uid(generatedUserId), new OperationOptionsBuilder().build());
     }
+
 }
