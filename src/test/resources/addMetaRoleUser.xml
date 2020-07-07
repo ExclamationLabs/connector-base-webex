@@ -1,0 +1,64 @@
+<role xmlns="http://midpoint.evolveum.com/xml/ns/public/common/common-3" xmlns:c="http://midpoint.evolveum.com/xml/ns/public/common/common-3" xmlns:icfs="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/resource-schema-3" xmlns:org="http://midpoint.evolveum.com/xml/ns/public/common/org-3" xmlns:q="http://prism.evolveum.com/xml/ns/public/query-3" xmlns:ri="http://midpoint.evolveum.com/xml/ns/public/resource/instance-3" xmlns:t="http://prism.evolveum.com/xml/ns/public/types-3" oid="a558507a-db69-4aec-a6a6-35613694eac2" version="22">
+    <name>Webex Meta Role User</name>
+    <metadata>
+        <requestTimestamp>2020-07-06T15:07:50.642-05:00</requestTimestamp>
+        <requestorRef oid="00000000-0000-0000-0000-000000000002" relation="org:default" type="c:UserType">
+            <!-- administrator -->
+        </requestorRef>
+        <createTimestamp>2020-07-06T15:07:50.653-05:00</createTimestamp>
+        <creatorRef oid="00000000-0000-0000-0000-000000000002" relation="org:default" type="c:UserType">
+            <!-- administrator -->
+        </creatorRef>
+        <createChannel>http://midpoint.evolveum.com/xml/ns/public/gui/channels-3#user</createChannel>
+    </metadata>
+    <operationExecution id="3">
+        <timestamp>2020-07-06T15:07:50.676-05:00</timestamp>
+        <operation>
+            <objectDelta>
+                <t:changeType>add</t:changeType>
+                <t:objectType>c:RoleType</t:objectType>
+            </objectDelta>
+            <executionResult>
+                <operation>com.evolveum.midpoint.model.impl.lens.ChangeExecutor.executeDelta</operation>
+                <status>success</status>
+                <importance>normal</importance>
+                <token>1000000000000000721</token>
+            </executionResult>
+            <objectName>Webex Meta Role User</objectName>
+        </operation>
+        <status>success</status>
+        <initiatorRef oid="00000000-0000-0000-0000-000000000002" relation="org:default" type="c:UserType">
+            <!-- administrator -->
+        </initiatorRef>
+        <channel>http://midpoint.evolveum.com/xml/ns/public/gui/channels-3#user</channel>
+    </operationExecution>
+    <iteration>0</iteration>
+    <iterationToken/>
+    <activation>
+        <effectiveStatus>enabled</effectiveStatus>
+        <enableTimestamp>2020-03-24T11:40:31.929-05:00</enableTimestamp>
+    </activation>
+    <inducement id="1">
+        <construction>
+            <resourceRef oid="0ee77827-0327-49bb-afb8-4596cd1766d8" relation="org:default" type="c:ResourceType">
+                <!-- Webex-Test -->
+            </resourceRef>
+            <kind>account</kind>
+            <intent>default</intent>
+            <association id="4">
+                <c:ref xmlns:ri="http://midpoint.evolveum.com/xml/ns/public/resource/instance-3">ri:UserToGroupLink</c:ref>
+                <outbound>
+                    <expression>
+                        <associationFromLink xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:c="http://midpoint.evolveum.com/xml/ns/public/common/common-3" xsi:type="c:AssociationFromLinkExpressionEvaluatorType">
+                            <projectionDiscriminator xmlns:c="http://midpoint.evolveum.com/xml/ns/public/common/common-3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="c:ShadowDiscriminatorType">
+                                <kind>entitlement</kind>
+                                <intent>privilege</intent>
+                            </projectionDiscriminator>
+                        </associationFromLink>
+                    </expression>
+                </outbound>
+            </association>
+        </construction>
+        <order>1</order>
+    </inducement>
+</role>

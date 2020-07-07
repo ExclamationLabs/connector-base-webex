@@ -1,0 +1,59 @@
+<objectTemplate xmlns="http://midpoint.evolveum.com/xml/ns/public/common/common-3" xmlns:c="http://midpoint.evolveum.com/xml/ns/public/common/common-3" xmlns:icfs="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/resource-schema-3" xmlns:org="http://midpoint.evolveum.com/xml/ns/public/common/org-3" xmlns:q="http://prism.evolveum.com/xml/ns/public/query-3" xmlns:ri="http://midpoint.evolveum.com/xml/ns/public/resource/instance-3" xmlns:t="http://prism.evolveum.com/xml/ns/public/types-3" oid="b5899c5a-b8d0-4046-88e1-765319c1bd9f" version="3">
+    <name>Role Template for Webex Group</name>
+    <description>
+        Role Template Object.
+    </description>
+    <metadata>
+        <requestTimestamp>2020-07-06T16:09:58.194-05:00</requestTimestamp>
+        <requestorRef oid="00000000-0000-0000-0000-000000000002" relation="org:default" type="c:UserType">
+            <!-- administrator -->
+        </requestorRef>
+        <createTimestamp>2020-07-06T16:09:58.201-05:00</createTimestamp>
+        <creatorRef oid="00000000-0000-0000-0000-000000000002" relation="org:default" type="c:UserType">
+            <!-- administrator -->
+        </creatorRef>
+        <createChannel>http://midpoint.evolveum.com/xml/ns/public/gui/channels-3#user</createChannel>
+    </metadata>
+    <operationExecution id="2">
+        <timestamp>2020-07-06T16:09:58.215-05:00</timestamp>
+        <operation>
+            <objectDelta>
+                <t:changeType>add</t:changeType>
+                <t:objectType>c:ObjectTemplateType</t:objectType>
+            </objectDelta>
+            <executionResult>
+                <operation>com.evolveum.midpoint.model.impl.lens.ChangeExecutor.executeDelta</operation>
+                <status>success</status>
+                <importance>normal</importance>
+                <token>1000000000000007347</token>
+            </executionResult>
+            <objectName>Role Template for Webex Group</objectName>
+        </operation>
+        <status>success</status>
+        <initiatorRef oid="00000000-0000-0000-0000-000000000002" relation="org:default" type="c:UserType">
+            <!-- administrator -->
+        </initiatorRef>
+        <channel>http://midpoint.evolveum.com/xml/ns/public/gui/channels-3#user</channel>
+    </operationExecution>
+    <iteration>0</iteration>
+    <iterationToken/>
+    <mapping id="1">
+        <name>Metarole mapping</name>
+        <authoritative>true</authoritative>
+        <strength>strong</strength>
+        <expression>
+            <assignmentTargetSearch xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:c="http://midpoint.evolveum.com/xml/ns/public/common/common-3" xsi:type="c:AssignmentTargetSearchExpressionEvaluatorType">
+                <targetType>c:RoleType</targetType>
+                <filter>
+                    <q:equal>
+                        <q:path xmlns:c="http://midpoint.evolveum.com/xml/ns/public/common/common-3">c:name</q:path>
+                        <q:value>Webex Meta Role Group</q:value>
+                    </q:equal>
+                </filter>
+            </assignmentTargetSearch>
+        </expression>
+        <target>
+            <c:path>assignment</c:path>
+        </target>
+    </mapping>
+</objectTemplate>

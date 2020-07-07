@@ -13,7 +13,6 @@
 
 package com.exclamationlabs.connid.base.webex;
 
-import com.exclamationlabs.connid.base.connector.configuration.ConfigurationConnector;
 import com.exclamationlabs.connid.base.connector.configuration.ConfigurationNameBuilder;
 import com.exclamationlabs.connid.base.connector.test.IntegrationTest;
 import com.exclamationlabs.connid.base.connector.test.util.ConnectorTestUtils;
@@ -21,6 +20,8 @@ import com.exclamationlabs.connid.base.webex.attribute.WebexGroupAttribute;
 import com.exclamationlabs.connid.base.webex.attribute.WebexUserAttribute;
 import com.exclamationlabs.connid.base.webex.configuration.WebexConfiguration;
 import org.apache.commons.lang3.StringUtils;
+import org.identityconnectors.framework.common.exceptions.AlreadyExistsException;
+import org.identityconnectors.framework.common.exceptions.InvalidAttributeValueException;
 import org.identityconnectors.framework.common.exceptions.PermissionDeniedException;
 import org.identityconnectors.framework.common.objects.*;
 import org.junit.Before;
@@ -34,16 +35,18 @@ import static org.junit.Assert.*;
 import static org.junit.Assert.assertNotNull;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class WebexConnectorIntegrationTest implements IntegrationTest {
+public class WebexConnectorIntegrationTest extends IntegrationTest {
 
     private WebexConnector connector;
 
     private static String generatedUserId;
-    private static String testGroupId = "Y2lzY29zcGFyazovL3VzL1JPTEUvaWRfZnVsbF9hZG1pbg";
+
+    // user administrator
+    private static final String testGroupId = "Y2lzY29zcGFyazovL3VzL1JPTEUvaWRfZnVsbF9hZG1pbg";
 
     @Override
     public String getConfigurationName() {
-        return new ConfigurationNameBuilder().withConnector(ConfigurationConnector.WEBEX).build();
+        return new ConfigurationNameBuilder().withConnector("WEBEX").build();
     }
 
     @Before
@@ -51,6 +54,19 @@ public class WebexConnectorIntegrationTest implements IntegrationTest {
         connector = new WebexConnector();
         setup(connector, new WebexConfiguration(getConfigurationName()));
 
+    }
+
+    @Test(expected = InvalidAttributeValueException.class)
+    public void test010UserCreateInvalid() {
+        Set<Attribute> attributes = new HashSet<>();
+        attributes.add(new AttributeBuilder().setName(WebexUserAttribute.FIRST_NAME.name()).addValue("Nada").build());
+        attributes.add(new AttributeBuilder().setName(WebexUserAttribute.LAST_NAME.name()).addValue("Bad").build());
+        attributes.add(new AttributeBuilder().setName(WebexUserAttribute.DISPLAY_NAME.name()).addValue("Nothing").build());
+
+        Uid newId = connector.create(ObjectClass.ACCOUNT, attributes, new OperationOptionsBuilder().build());
+        assertNotNull(newId);
+        assertNotNull(newId.getUidValue());
+        generatedUserId = newId.getUidValue();
     }
 
     @Test
@@ -62,6 +78,41 @@ public class WebexConnectorIntegrationTest implements IntegrationTest {
 
         attributes.add(new AttributeBuilder().setName(WebexUserAttribute.EMAILS.name()).
                 addValue(Collections.singletonList("mneugebauer+betarubble@exclamationlabs.com")).build());
+
+        attributes.add(new AttributeBuilder().setName(WebexUserAttribute.ROLES.name()).
+                addValue(Collections.singletonList(testGroupId)).build());
+
+        Uid newId = connector.create(ObjectClass.ACCOUNT, attributes, new OperationOptionsBuilder().build());
+        assertNotNull(newId);
+        assertNotNull(newId.getUidValue());
+        generatedUserId = newId.getUidValue();
+    }
+
+    @Test(expected=AlreadyExistsException.class)
+    public void test112UserCreateAlreadyExists() {
+        Set<Attribute> attributes = new HashSet<>();
+        attributes.add(new AttributeBuilder().setName(WebexUserAttribute.FIRST_NAME.name()).addValue("Beta").build());
+        attributes.add(new AttributeBuilder().setName(WebexUserAttribute.LAST_NAME.name()).addValue("Rubble").build());
+        attributes.add(new AttributeBuilder().setName(WebexUserAttribute.DISPLAY_NAME.name()).addValue("Beta Rubble").build());
+
+        attributes.add(new AttributeBuilder().setName(WebexUserAttribute.EMAILS.name()).
+                addValue(Collections.singletonList("mneugebauer+betarubble@exclamationlabs.com")).build());
+
+        attributes.add(new AttributeBuilder().setName(WebexUserAttribute.ROLES.name()).
+                addValue(Collections.singletonList(testGroupId)).build());
+
+        Uid newId = connector.create(ObjectClass.ACCOUNT, attributes, new OperationOptionsBuilder().build());
+        assertNotNull(newId);
+        assertNotNull(newId.getUidValue());
+        generatedUserId = newId.getUidValue();
+    }
+
+    @Test(expected=InvalidAttributeValueException.class)
+    public void test114UserCreateMissingEmail() {
+        Set<Attribute> attributes = new HashSet<>();
+        attributes.add(new AttributeBuilder().setName(WebexUserAttribute.FIRST_NAME.name()).addValue("Test").build());
+        attributes.add(new AttributeBuilder().setName(WebexUserAttribute.LAST_NAME.name()).addValue("Rubble").build());
+        attributes.add(new AttributeBuilder().setName(WebexUserAttribute.DISPLAY_NAME.name()).addValue("Test Rubble").build());
 
         Uid newId = connector.create(ObjectClass.ACCOUNT, attributes, new OperationOptionsBuilder().build());
         assertNotNull(newId);

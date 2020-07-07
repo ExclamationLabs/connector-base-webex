@@ -50,7 +50,11 @@ public class WebexDriver extends BaseRestDriver<WebexUser, WebexGroup> {
 
     @Override
     public void test() throws ConnectorException {
-        // TODO: determine Webex test method
+        try {
+            executeGetRequest("/organizations", null);
+        } catch (Exception e) {
+            throw new ConnectorException("Test listing of organizations for Webex connection failed.", e);
+        }
 
     }
 
