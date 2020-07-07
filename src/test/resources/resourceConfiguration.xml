@@ -38,7 +38,7 @@
     </connectorRef>
     <connectorConfiguration xmlns:icfc="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/connector-schema-3">
         <icfc:configurationProperties xmlns:gen154="http://midpoint.evolveum.com/xml/ns/public/connector/icf-1/bundle/connector-base-webex/com.exclamationlabs.connid.base.webex.WebexConnector">
-            <gen154:configurationFilePath>/Users/mneugebauer/Documents/WebEx/webex.properties</gen154:configurationFilePath>
+            <gen154:configurationFilePath>/Users/someone/Documents/WebEx/webex.properties</gen154:configurationFilePath>
         </icfc:configurationProperties>
     </connectorConfiguration>
     <schema>
