@@ -32,6 +32,9 @@ import static com.exclamationlabs.connid.base.webex.attribute.WebexUserAttribute
 import static com.exclamationlabs.connid.base.webex.attribute.WebexGroupAttribute.*;
 import static org.identityconnectors.framework.common.objects.AttributeInfo.Flags.*;
 
+/**
+ * Connector for Webex.  Webex API does not support creating, updating or deleting Roles.
+ */
 @ConnectorClass(displayNameKey = "webex.connector.display", configurationClass = WebexConfiguration.class)
 public class WebexConnector extends BaseConnector<WebexUser, WebexGroup> {
 
