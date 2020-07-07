@@ -77,7 +77,7 @@ public class WebexConnectorIntegrationTest extends IntegrationTest {
         attributes.add(new AttributeBuilder().setName(WebexUserAttribute.DISPLAY_NAME.name()).addValue("Beta Rubble").build());
 
         attributes.add(new AttributeBuilder().setName(WebexUserAttribute.EMAILS.name()).
-                addValue(Collections.singletonList("mneugebauer+betarubble@exclamationlabs.com")).build());
+                addValue(Collections.singletonList("connectors+betarubble@exclamationlabs.com")).build());
 
         attributes.add(new AttributeBuilder().setName(WebexUserAttribute.ROLES.name()).
                 addValue(Collections.singletonList(testGroupId)).build());
@@ -96,7 +96,7 @@ public class WebexConnectorIntegrationTest extends IntegrationTest {
         attributes.add(new AttributeBuilder().setName(WebexUserAttribute.DISPLAY_NAME.name()).addValue("Beta Rubble").build());
 
         attributes.add(new AttributeBuilder().setName(WebexUserAttribute.EMAILS.name()).
-                addValue(Collections.singletonList("mneugebauer+betarubble@exclamationlabs.com")).build());
+                addValue(Collections.singletonList("connectors+betarubble@exclamationlabs.com")).build());
 
         attributes.add(new AttributeBuilder().setName(WebexUserAttribute.ROLES.name()).
                 addValue(Collections.singletonList(testGroupId)).build());
