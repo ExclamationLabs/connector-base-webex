@@ -13,9 +13,9 @@
 
 package com.exclamationlabs.connid.base.webex.model;
 
-import com.exclamationlabs.connid.base.connector.model.GroupIdentityModel;
+import com.exclamationlabs.connid.base.connector.model.IdentityModel;
 
-public class WebexGroup implements GroupIdentityModel {
+public class WebexGroup implements IdentityModel {
 
     private String id;
     private String name;

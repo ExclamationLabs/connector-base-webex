@@ -13,61 +13,24 @@
 
 package com.exclamationlabs.connid.base.webex;
 
-import com.exclamationlabs.connid.base.connector.BaseConnector;
-import com.exclamationlabs.connid.base.connector.attribute.ConnectorAttributeMapBuilder;
+import com.exclamationlabs.connid.base.connector.BaseFullAccessConnector;
 import com.exclamationlabs.connid.base.connector.authenticator.OAuth2TokenRefreshTokenAuthenticator;
 import com.exclamationlabs.connid.base.webex.adapter.WebexGroupsAdapter;
 import com.exclamationlabs.connid.base.webex.adapter.WebexUsersAdapter;
-import com.exclamationlabs.connid.base.webex.attribute.WebexGroupAttribute;
-import com.exclamationlabs.connid.base.webex.attribute.WebexUserAttribute;
 import com.exclamationlabs.connid.base.webex.configuration.WebexConfiguration;
 import com.exclamationlabs.connid.base.webex.driver.rest.WebexDriver;
-import com.exclamationlabs.connid.base.webex.model.WebexGroup;
-import com.exclamationlabs.connid.base.webex.model.WebexUser;
 import org.identityconnectors.framework.spi.ConnectorClass;
-
-import static com.exclamationlabs.connid.base.connector.attribute.ConnectorAttributeDataType.*;
-
-import static com.exclamationlabs.connid.base.webex.attribute.WebexUserAttribute.*;
-import static com.exclamationlabs.connid.base.webex.attribute.WebexGroupAttribute.*;
-import static org.identityconnectors.framework.common.objects.AttributeInfo.Flags.*;
 
 /**
  * Connector for Webex.  Webex API does not support creating, updating or deleting Roles.
  */
 @ConnectorClass(displayNameKey = "webex.connector.display", configurationClass = WebexConfiguration.class)
-public class WebexConnector extends BaseConnector<WebexUser, WebexGroup> {
+public class WebexConnector extends BaseFullAccessConnector {
 
     public WebexConnector() {
 
         setAuthenticator(new OAuth2TokenRefreshTokenAuthenticator());
         setDriver(new WebexDriver());
-        setUsersAdapter(new WebexUsersAdapter());
-        setGroupsAdapter(new WebexGroupsAdapter());
-        setUserAttributes( new ConnectorAttributeMapBuilder<>(WebexUserAttribute.class)
-                .add(USER_ID, STRING, NOT_UPDATEABLE)
-                .add(FIRST_NAME, STRING)
-                .add(LAST_NAME, STRING)
-                .add(DISPLAY_NAME, STRING)
-                .add(EMAILS, STRING, MULTIVALUED)
-                .add(ORG_ID, STRING)
-                .add(AVATAR, STRING)
-                .add(CREATED, STRING, NOT_CREATABLE, NOT_UPDATEABLE)
-                .add(LAST_MODIFIED, STRING, NOT_CREATABLE, NOT_UPDATEABLE)
-                .add(LAST_ACTIVITY, STRING, NOT_CREATABLE, NOT_UPDATEABLE)
-                .add(TIMEZONE, STRING, NOT_CREATABLE, NOT_UPDATEABLE)
-                .add(NICKNAME, STRING, NOT_CREATABLE, NOT_UPDATEABLE)
-                .add(STATUS, STRING, NOT_CREATABLE, NOT_UPDATEABLE)
-                .add(TYPE, STRING, NOT_CREATABLE, NOT_UPDATEABLE)
-                .add(ROLES, STRING, MULTIVALUED)
-                .add(LICENSES, STRING, MULTIVALUED)
-                .add(PHONE_NUMBERS, STRING, NOT_CREATABLE, NOT_UPDATEABLE, MULTIVALUED)
-                .add(INVITE_PENDING, BOOLEAN, NOT_CREATABLE, NOT_UPDATEABLE)
-                .add(LOGIN_ENABLED, BOOLEAN, NOT_CREATABLE, NOT_UPDATEABLE)
-                .build());
-        setGroupAttributes(new ConnectorAttributeMapBuilder<>(WebexGroupAttribute.class)
-                .add(GROUP_ID, STRING, NOT_UPDATEABLE)
-                .add(GROUP_NAME, STRING, REQUIRED)
-                .build());
+        setAdapters(new WebexUsersAdapter(), new WebexGroupsAdapter());
     }
 }

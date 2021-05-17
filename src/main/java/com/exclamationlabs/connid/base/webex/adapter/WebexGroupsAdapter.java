@@ -14,34 +14,56 @@
 package com.exclamationlabs.connid.base.webex.adapter;
 
 import com.exclamationlabs.connid.base.connector.adapter.AdapterValueTypeConverter;
-import com.exclamationlabs.connid.base.connector.adapter.BaseGroupsAdapter;
+import com.exclamationlabs.connid.base.connector.adapter.BaseAdapter;
+import com.exclamationlabs.connid.base.connector.attribute.ConnectorAttribute;
 import com.exclamationlabs.connid.base.webex.model.WebexGroup;
-import com.exclamationlabs.connid.base.webex.model.WebexUser;
 import org.identityconnectors.framework.common.objects.Attribute;
 import org.identityconnectors.framework.common.objects.AttributeBuilder;
-import org.identityconnectors.framework.common.objects.ConnectorObject;
+import org.identityconnectors.framework.common.objects.ObjectClass;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
+import static com.exclamationlabs.connid.base.connector.attribute.ConnectorAttributeDataType.STRING;
 import static com.exclamationlabs.connid.base.webex.attribute.WebexGroupAttribute.*;
+import static org.identityconnectors.framework.common.objects.AttributeInfo.Flags.*;
 
-public class WebexGroupsAdapter extends BaseGroupsAdapter<WebexUser, WebexGroup> {
+public class WebexGroupsAdapter extends BaseAdapter<WebexGroup> {
 
     @Override
-    protected WebexGroup constructGroup(Set<Attribute> attributes, boolean creation) {
+    public ObjectClass getType() {
+        return ObjectClass.GROUP;
+    }
+
+    @Override
+    public Class<WebexGroup> getIdentityModelClass() {
+        return WebexGroup.class;
+    }
+
+    @Override
+    public List<ConnectorAttribute> getConnectorAttributes() {
+        List<ConnectorAttribute> result = new ArrayList<>();
+        result.add(new ConnectorAttribute(GROUP_ID.name(), STRING, NOT_UPDATEABLE));
+        result.add(new ConnectorAttribute(GROUP_NAME.name(), STRING, REQUIRED));
+        return result;
+    }
+
+    @Override
+    protected List<Attribute> constructAttributes(WebexGroup group) {
+        List<Attribute> attributes = new ArrayList<>();
+        attributes.add(AttributeBuilder.build(GROUP_ID.name(), group.getId()));
+        attributes.add(AttributeBuilder.build(GROUP_NAME.name(), group.getName()));
+        return attributes;
+    }
+
+    @Override
+    protected WebexGroup constructModel(Set<Attribute> attributes, boolean isCreation) {
         WebexGroup group = new WebexGroup();
         group.setId(AdapterValueTypeConverter.getIdentityIdAttributeValue(attributes));
         group.setName(AdapterValueTypeConverter.getSingleAttributeValue(
                 String.class, attributes, GROUP_NAME));
 
         return group;
-    }
-
-    @Override
-    protected ConnectorObject constructConnectorObject(WebexGroup group) {
-        return getConnectorObjectBuilder(group)
-                .addAttribute(AttributeBuilder.build(GROUP_ID.name(), group.getId()))
-                .addAttribute(AttributeBuilder.build(GROUP_NAME.name(), group.getName()))
-                .build();
     }
 }
