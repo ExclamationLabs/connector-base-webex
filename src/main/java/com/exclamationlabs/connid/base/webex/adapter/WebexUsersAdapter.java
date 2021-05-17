@@ -14,21 +14,87 @@
 package com.exclamationlabs.connid.base.webex.adapter;
 
 import com.exclamationlabs.connid.base.connector.adapter.AdapterValueTypeConverter;
-import com.exclamationlabs.connid.base.connector.adapter.BaseUsersAdapter;
-import com.exclamationlabs.connid.base.webex.model.WebexGroup;
+import com.exclamationlabs.connid.base.connector.adapter.BaseAdapter;
+import com.exclamationlabs.connid.base.connector.attribute.ConnectorAttribute;
 import com.exclamationlabs.connid.base.webex.model.WebexUser;
 import org.identityconnectors.framework.common.objects.Attribute;
 import org.identityconnectors.framework.common.objects.AttributeBuilder;
-import org.identityconnectors.framework.common.objects.ConnectorObject;
+import org.identityconnectors.framework.common.objects.ObjectClass;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import static com.exclamationlabs.connid.base.connector.attribute.ConnectorAttributeDataType.BOOLEAN;
+import static com.exclamationlabs.connid.base.connector.attribute.ConnectorAttributeDataType.STRING;
 import static com.exclamationlabs.connid.base.webex.attribute.WebexUserAttribute.*;
+import static org.identityconnectors.framework.common.objects.AttributeInfo.Flags.*;
+import static org.identityconnectors.framework.common.objects.AttributeInfo.Flags.NOT_CREATABLE;
 
-public class WebexUsersAdapter extends BaseUsersAdapter<WebexUser, WebexGroup> {
+public class WebexUsersAdapter extends BaseAdapter<WebexUser> {
+
     @Override
-    protected WebexUser constructUser(Set<Attribute> attributes, boolean creation) {
+    public ObjectClass getType() {
+        return ObjectClass.ACCOUNT;
+    }
+
+    @Override
+    public Class<WebexUser> getIdentityModelClass() {
+        return WebexUser.class;
+    }
+
+    @Override
+    public List<ConnectorAttribute> getConnectorAttributes() {
+        List<ConnectorAttribute> result = new ArrayList<>();
+        result.add(new ConnectorAttribute(USER_ID.name(), STRING, NOT_UPDATEABLE));
+        result.add(new ConnectorAttribute(FIRST_NAME.name(), STRING));
+        result.add(new ConnectorAttribute(LAST_NAME.name(), STRING));
+        result.add(new ConnectorAttribute(DISPLAY_NAME.name(), STRING));
+        result.add(new ConnectorAttribute(EMAILS.name(), STRING, MULTIVALUED));
+        result.add(new ConnectorAttribute(ORG_ID.name(), STRING));
+        result.add(new ConnectorAttribute(AVATAR.name(), STRING));
+        result.add(new ConnectorAttribute(CREATED.name(), STRING, NOT_CREATABLE, NOT_UPDATEABLE));
+        result.add(new ConnectorAttribute(LAST_MODIFIED.name(), STRING, NOT_CREATABLE, NOT_UPDATEABLE));
+        result.add(new ConnectorAttribute(LAST_ACTIVITY.name(), STRING, NOT_CREATABLE, NOT_UPDATEABLE));
+        result.add(new ConnectorAttribute(TIMEZONE.name(), STRING, NOT_CREATABLE, NOT_UPDATEABLE));
+        result.add(new ConnectorAttribute(NICKNAME.name(), STRING, NOT_CREATABLE, NOT_UPDATEABLE));
+        result.add(new ConnectorAttribute(STATUS.name(), STRING, NOT_CREATABLE, NOT_UPDATEABLE));
+        result.add(new ConnectorAttribute(TYPE.name(), STRING, NOT_CREATABLE, NOT_UPDATEABLE));
+        result.add(new ConnectorAttribute(ROLES.name(), STRING, MULTIVALUED));
+        result.add(new ConnectorAttribute(LICENSES.name(), STRING, MULTIVALUED));
+        result.add(new ConnectorAttribute(PHONE_NUMBERS.name(), STRING, NOT_CREATABLE, NOT_UPDATEABLE, MULTIVALUED));
+        result.add(new ConnectorAttribute(INVITE_PENDING.name(), BOOLEAN, NOT_CREATABLE, NOT_UPDATEABLE));
+        result.add(new ConnectorAttribute(LOGIN_ENABLED.name(), BOOLEAN, NOT_CREATABLE, NOT_UPDATEABLE));
+        return result;
+    }
+
+    @Override
+    protected List<Attribute> constructAttributes(WebexUser user) {
+        List<Attribute> attributes = new ArrayList<>();
+        attributes.add(AttributeBuilder.build(USER_ID.name(), user.getId()));
+        attributes.add(AttributeBuilder.build(FIRST_NAME.name(), user.getFirstName()));
+        attributes.add(AttributeBuilder.build(LAST_NAME.name(), user.getLastName()));
+        attributes.add(AttributeBuilder.build(DISPLAY_NAME.name(), user.getDisplayName()));
+        attributes.add(AttributeBuilder.build(ORG_ID.name(), user.getOrgId()));
+        attributes.add(AttributeBuilder.build(AVATAR.name(), user.getAvatar()));
+        attributes.add(AttributeBuilder.build(CREATED.name(), user.getCreated()));
+        attributes.add(AttributeBuilder.build(LAST_MODIFIED.name(), user.getLastModified()));
+        attributes.add(AttributeBuilder.build(LAST_ACTIVITY.name(), user.getLastActivity()));
+        attributes.add(AttributeBuilder.build(TIMEZONE.name(), user.getTimezone()));
+        attributes.add(AttributeBuilder.build(NICKNAME.name(), user.getNickname()));
+        attributes.add(AttributeBuilder.build(STATUS.name(), user.getStatus()));
+        attributes.add(AttributeBuilder.build(TYPE.name(), user.getType()));
+        attributes.add(AttributeBuilder.build(ROLES.name(), user.getRoles()));
+        attributes.add(AttributeBuilder.build(LICENSES.name(), user.getLicenses()));
+        attributes.add(AttributeBuilder.build(PHONE_NUMBERS.name(), user.getPhoneNumbers()));
+        attributes.add(AttributeBuilder.build(INVITE_PENDING.name(), user.getInvitePending()));
+        attributes.add(AttributeBuilder.build(LOGIN_ENABLED.name(), user.getLoginEnabled()));
+
+        return attributes;
+    }
+
+    @Override
+    protected WebexUser constructModel(Set<Attribute> attributes, boolean isCreation) {
         WebexUser user = new WebexUser();
         user.setId(AdapterValueTypeConverter.getIdentityIdAttributeValue(attributes));
 
@@ -52,33 +118,4 @@ public class WebexUsersAdapter extends BaseUsersAdapter<WebexUser, WebexGroup> {
         return user;
     }
 
-    @Override
-    protected ConnectorObject constructConnectorObject(WebexUser user) {
-        return getConnectorObjectBuilder(user)
-                .addAttribute(AttributeBuilder.build(USER_ID.name(), user.getId()))
-                .addAttribute(AttributeBuilder.build(FIRST_NAME.name(), user.getFirstName()))
-                .addAttribute(AttributeBuilder.build(LAST_NAME.name(), user.getLastName()))
-                .addAttribute(AttributeBuilder.build(DISPLAY_NAME.name(), user.getDisplayName()))
-                .addAttribute(AttributeBuilder.build(ORG_ID.name(), user.getOrgId()))
-                .addAttribute(AttributeBuilder.build(AVATAR.name(), user.getAvatar()))
-                .addAttribute(AttributeBuilder.build(CREATED.name(), user.getCreated()))
-                .addAttribute(AttributeBuilder.build(LAST_MODIFIED.name(), user.getLastModified()))
-                .addAttribute(AttributeBuilder.build(LAST_ACTIVITY.name(), user.getLastActivity()))
-                .addAttribute(AttributeBuilder.build(TIMEZONE.name(), user.getTimezone()))
-                .addAttribute(AttributeBuilder.build(NICKNAME.name(), user.getNickname()))
-                .addAttribute(AttributeBuilder.build(STATUS.name(), user.getStatus()))
-                .addAttribute(AttributeBuilder.build(TYPE.name(), user.getType()))
-                .addAttribute(AttributeBuilder.build(ROLES.name(), user.getRoles()))
-                .addAttribute(AttributeBuilder.build(LICENSES.name(), user.getLicenses()))
-                .addAttribute(AttributeBuilder.build(PHONE_NUMBERS.name(), user.getPhoneNumbers()))
-                .addAttribute(AttributeBuilder.build(INVITE_PENDING.name(), user.getInvitePending()))
-                .addAttribute(AttributeBuilder.build(LOGIN_ENABLED.name(), user.getLoginEnabled()))
-                .build();
-
-    }
-
-    @Override
-    protected boolean groupAdditionControlledByUpdate() {
-        return true;
-    }
 }

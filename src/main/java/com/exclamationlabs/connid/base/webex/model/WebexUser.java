@@ -13,12 +13,11 @@
 
 package com.exclamationlabs.connid.base.webex.model;
 
-import com.exclamationlabs.connid.base.connector.model.UserIdentityModel;
-import com.exclamationlabs.connid.base.webex.attribute.WebexUserAttribute;
+import com.exclamationlabs.connid.base.connector.model.IdentityModel;
 
 import java.util.List;
 
-public class WebexUser implements UserIdentityModel {
+public class WebexUser implements IdentityModel {
 
     private String id;
     private List<String> emails;
@@ -39,16 +38,6 @@ public class WebexUser implements UserIdentityModel {
     private String timezone;
     private String nickname;
     private List<String> phoneNumbers;
-
-    @Override
-    public String getAssignedGroupsAttributeName() {
-        return WebexUserAttribute.ROLES.name();
-    }
-
-    @Override
-    public List<String> getAssignedGroupIds() {
-        return getRoles();
-    }
 
     @Override
     public String getIdentityIdValue() {

@@ -35,6 +35,6 @@ public class WebexConfiguration extends BaseConnectorConfiguration {
             helpMessageKey = "File path for the Webex Configuration File",
             required = true)
     public String getConfigurationFilePath() {
-        return getMidPointConfigurationFilePath();
+        return innerGetMidPointConfigurationFilePath();
     }
 }
