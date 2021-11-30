@@ -14,22 +14,23 @@
 package com.exclamationlabs.connid.base.webex;
 
 import com.exclamationlabs.connid.base.connector.BaseFullAccessConnector;
+import com.exclamationlabs.connid.base.connector.authenticator.Authenticator;
 import com.exclamationlabs.connid.base.connector.authenticator.OAuth2TokenRefreshTokenAuthenticator;
 import com.exclamationlabs.connid.base.webex.adapter.WebexGroupsAdapter;
 import com.exclamationlabs.connid.base.webex.adapter.WebexUsersAdapter;
-import com.exclamationlabs.connid.base.webex.configuration.WebexConfiguration;
+import com.exclamationlabs.connid.base.webex.configuration.WebExConfiguration;
 import com.exclamationlabs.connid.base.webex.driver.rest.WebexDriver;
 import org.identityconnectors.framework.spi.ConnectorClass;
 
 /**
  * Connector for Webex.  Webex API does not support creating, updating or deleting Roles.
  */
-@ConnectorClass(displayNameKey = "webex.connector.display", configurationClass = WebexConfiguration.class)
-public class WebexConnector extends BaseFullAccessConnector {
+@ConnectorClass(displayNameKey = "webex.connector.display", configurationClass = WebExConfiguration.class)
+public class WebexConnector extends BaseFullAccessConnector<WebExConfiguration> {
 
     public WebexConnector() {
-
-        setAuthenticator(new OAuth2TokenRefreshTokenAuthenticator());
+        super(WebExConfiguration.class);
+        setAuthenticator((Authenticator) new OAuth2TokenRefreshTokenAuthenticator());
         setDriver(new WebexDriver());
         setAdapters(new WebexUsersAdapter(), new WebexGroupsAdapter());
     }

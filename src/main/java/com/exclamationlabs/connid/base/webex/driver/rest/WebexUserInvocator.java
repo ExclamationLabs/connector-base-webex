@@ -14,13 +14,15 @@
 package com.exclamationlabs.connid.base.webex.driver.rest;
 
 import com.exclamationlabs.connid.base.connector.driver.DriverInvocator;
+import com.exclamationlabs.connid.base.connector.results.ResultsFilter;
+import com.exclamationlabs.connid.base.connector.results.ResultsPaginator;
 import com.exclamationlabs.connid.base.webex.model.WebexUser;
 import com.exclamationlabs.connid.base.webex.model.response.ListUsersResponse;
 import org.identityconnectors.framework.common.exceptions.ConnectorException;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class WebexUserInvocator implements DriverInvocator<WebexDriver, WebexUser> {
 
@@ -49,7 +51,8 @@ public class WebexUserInvocator implements DriverInvocator<WebexDriver, WebexUse
     }
 
     @Override
-    public List<WebexUser> getAll(WebexDriver driver, Map<String, Object> map) throws ConnectorException {
+    public Set<WebexUser> getAll(WebexDriver driver, ResultsFilter filter,
+                                 ResultsPaginator paginator, Integer max) throws ConnectorException {
         ListUsersResponse response = driver.executeGetRequest("/people",
                 ListUsersResponse.class).getResponseObject();
         return response.getItems();

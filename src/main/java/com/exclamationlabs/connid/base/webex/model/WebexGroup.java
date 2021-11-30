@@ -45,4 +45,14 @@ public class WebexGroup implements IdentityModel {
     public void setName(String name) {
         this.name = name;
     }
+
+    @Override
+    public boolean equals(Object input) {
+        return identityEquals(WebexGroup.class, this, input);
+    }
+
+    @Override
+    public int hashCode() {
+        return identityHashCode();
+    }
 }

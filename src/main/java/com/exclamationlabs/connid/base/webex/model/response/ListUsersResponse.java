@@ -15,17 +15,17 @@ package com.exclamationlabs.connid.base.webex.model.response;
 
 import com.exclamationlabs.connid.base.webex.model.WebexUser;
 
-import java.util.List;
+import java.util.Set;
 
 public class ListUsersResponse {
 
-    private List<WebexUser> items;
+    private Set<WebexUser> items;
 
-    public List<WebexUser> getItems() {
+    public Set<WebexUser> getItems() {
         return items;
     }
 
-    public void setItems(List<WebexUser> items) {
+    public void setItems(Set<WebexUser> items) {
         this.items = items;
     }
 }

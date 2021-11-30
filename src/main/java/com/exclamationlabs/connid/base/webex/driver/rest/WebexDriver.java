@@ -13,16 +13,14 @@
 
 package com.exclamationlabs.connid.base.webex.driver.rest;
 
-import com.exclamationlabs.connid.base.connector.configuration.ConnectorProperty;
 import com.exclamationlabs.connid.base.connector.driver.rest.BaseRestDriver;
 import com.exclamationlabs.connid.base.connector.driver.rest.RestFaultProcessor;
+import com.exclamationlabs.connid.base.webex.configuration.WebExConfiguration;
 import com.exclamationlabs.connid.base.webex.model.WebexGroup;
 import com.exclamationlabs.connid.base.webex.model.WebexUser;
 import org.identityconnectors.framework.common.exceptions.ConnectorException;
 
-import java.util.Set;
-
-public class WebexDriver extends BaseRestDriver {
+public class WebexDriver extends BaseRestDriver<WebExConfiguration> {
 
     public WebexDriver() {
         super();
@@ -37,17 +35,12 @@ public class WebexDriver extends BaseRestDriver {
 
     @Override
     protected String getBaseServiceUrl() {
-        return "https://webexapis.com/v1";
+        return getConfiguration().getServiceUrl();
     }
 
     @Override
     protected boolean usesBearerAuthorization() {
         return true;
-    }
-
-    @Override
-    public Set<ConnectorProperty> getRequiredPropertyNames() {
-        return null;
     }
 
     @Override

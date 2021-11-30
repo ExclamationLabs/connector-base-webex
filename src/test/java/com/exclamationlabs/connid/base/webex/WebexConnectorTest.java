@@ -16,7 +16,7 @@ package com.exclamationlabs.connid.base.webex;
 import com.exclamationlabs.connid.base.connector.test.util.ConnectorMockRestTest;
 import com.exclamationlabs.connid.base.connector.test.util.ConnectorTestUtils;
 import com.exclamationlabs.connid.base.webex.attribute.WebexUserAttribute;
-import com.exclamationlabs.connid.base.webex.configuration.WebexConfiguration;
+import com.exclamationlabs.connid.base.webex.configuration.WebExConfiguration;
 import com.exclamationlabs.connid.base.webex.driver.rest.WebexDriver;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.HttpClient;
@@ -52,8 +52,11 @@ public class WebexConnectorTest extends ConnectorMockRestTest {
                 super.init(configuration);
             }
         };
-        WebexConfiguration configuration = new WebexConfiguration();
-        configuration.setTestConfiguration();
+        WebExConfiguration configuration = new WebExConfiguration();
+        configuration.setServiceUrl("test");
+        configuration.setTokenUrl("test");
+        configuration.setRefreshToken("test");
+
         connector.init(configuration);
     }
 
@@ -81,14 +84,16 @@ public class WebexConnectorTest extends ConnectorMockRestTest {
         final String responseData = "{\"id\":\"Y2lzY29zcGFyazovL3VzL1BFT1BMRS8yNGQxYjcwNS0zZGFiLTQ4ZDYtODlkMC0wMzI4NmU5YzY3NDM\",\"emails\":[\"test+betarubble@exclamationlabs.com\"],\"displayName\":\"Beta Rubble\",\"firstName\":\"Beta2\",\"lastName\":\"Beta2 Rubble\",\"orgId\":\"Y2lzY29zcGFyazovL3VzL09SR0FOSVpBVElPTi8xNzZhNjVmNS04ODU1LTRhMDctYTAwNS0xYWIyOTU5Yzk5NjI\",\"roles\":[],\"licenses\":[]}\n";
         prepareMockResponse(responseData);
 
-        Set<Attribute> attributes = new HashSet<>();
-        attributes.add(new AttributeBuilder().setName(WebexUserAttribute.FIRST_NAME.name()).addValue("Beta2").build());
-        attributes.add(new AttributeBuilder().setName(WebexUserAttribute.DISPLAY_NAME.name()).addValue("Beta2 Rubble").build());
+        Set<AttributeDelta> attributes = new HashSet<>();
+        attributes.add(new AttributeDeltaBuilder().setName(
+                WebexUserAttribute.FIRST_NAME.name()).addValueToReplace("Beta2").build());
+        attributes.add(new AttributeDeltaBuilder().setName(
+                WebexUserAttribute.DISPLAY_NAME.name()).addValueToReplace("Beta2 Rubble").build());
 
-        Uid newId = connector.update(ObjectClass.ACCOUNT, new Uid("1234"), attributes, new OperationOptionsBuilder().build());
+        Set<AttributeDelta> response = connector.updateDelta(ObjectClass.ACCOUNT, new Uid("1234"), attributes, new OperationOptionsBuilder().build());
 
-        assertNotNull(newId);
-        assertNotNull(newId.getUidValue());
+        assertNotNull(response);
+        assertTrue(response.isEmpty());
     }
 
     @Test
@@ -154,7 +159,7 @@ public class WebexConnectorTest extends ConnectorMockRestTest {
 
     @Test
     public void test390UserDelete() {
-        prepareMockResponseEmpty();
+        prepareMockResponse();
         connector.delete(ObjectClass.ACCOUNT, new Uid("1234"), new OperationOptionsBuilder().build());
     }
 

@@ -14,13 +14,15 @@
 package com.exclamationlabs.connid.base.webex.driver.rest;
 
 import com.exclamationlabs.connid.base.connector.driver.DriverInvocator;
+import com.exclamationlabs.connid.base.connector.results.ResultsFilter;
+import com.exclamationlabs.connid.base.connector.results.ResultsPaginator;
 import com.exclamationlabs.connid.base.webex.model.WebexGroup;
 import com.exclamationlabs.connid.base.webex.model.response.ListGroupsResponse;
 import org.identityconnectors.framework.common.exceptions.ConnectorException;
 import org.identityconnectors.framework.common.exceptions.PermissionDeniedException;
 
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class WebexGroupInvocator implements DriverInvocator<WebexDriver, WebexGroup> {
 
@@ -40,7 +42,8 @@ public class WebexGroupInvocator implements DriverInvocator<WebexDriver, WebexGr
     }
 
     @Override
-    public List<WebexGroup> getAll(WebexDriver driver, Map<String, Object> map) throws ConnectorException {
+    public Set<WebexGroup> getAll(WebexDriver driver, ResultsFilter filter,
+                                  ResultsPaginator paginator, Integer max) throws ConnectorException {
         ListGroupsResponse response = driver.executeGetRequest("/roles",
                 ListGroupsResponse.class).getResponseObject();
         return response.getItems();

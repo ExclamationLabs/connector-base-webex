@@ -16,20 +16,20 @@ package com.exclamationlabs.connid.base.webex.adapter;
 import com.exclamationlabs.connid.base.connector.adapter.AdapterValueTypeConverter;
 import com.exclamationlabs.connid.base.connector.adapter.BaseAdapter;
 import com.exclamationlabs.connid.base.connector.attribute.ConnectorAttribute;
+import com.exclamationlabs.connid.base.webex.configuration.WebExConfiguration;
 import com.exclamationlabs.connid.base.webex.model.WebexGroup;
 import org.identityconnectors.framework.common.objects.Attribute;
 import org.identityconnectors.framework.common.objects.AttributeBuilder;
 import org.identityconnectors.framework.common.objects.ObjectClass;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Set;
 
 import static com.exclamationlabs.connid.base.connector.attribute.ConnectorAttributeDataType.STRING;
 import static com.exclamationlabs.connid.base.webex.attribute.WebexGroupAttribute.*;
 import static org.identityconnectors.framework.common.objects.AttributeInfo.Flags.*;
 
-public class WebexGroupsAdapter extends BaseAdapter<WebexGroup> {
+public class WebexGroupsAdapter extends BaseAdapter<WebexGroup, WebExConfiguration> {
 
     @Override
     public ObjectClass getType() {
@@ -42,23 +42,24 @@ public class WebexGroupsAdapter extends BaseAdapter<WebexGroup> {
     }
 
     @Override
-    public List<ConnectorAttribute> getConnectorAttributes() {
-        List<ConnectorAttribute> result = new ArrayList<>();
+    public Set<ConnectorAttribute> getConnectorAttributes() {
+        Set<ConnectorAttribute> result = new HashSet<>();
         result.add(new ConnectorAttribute(GROUP_ID.name(), STRING, NOT_UPDATEABLE));
         result.add(new ConnectorAttribute(GROUP_NAME.name(), STRING, REQUIRED));
         return result;
     }
 
     @Override
-    protected List<Attribute> constructAttributes(WebexGroup group) {
-        List<Attribute> attributes = new ArrayList<>();
+    protected Set<Attribute> constructAttributes(WebexGroup group) {
+        Set<Attribute> attributes = new HashSet<>();
         attributes.add(AttributeBuilder.build(GROUP_ID.name(), group.getId()));
         attributes.add(AttributeBuilder.build(GROUP_NAME.name(), group.getName()));
         return attributes;
     }
 
     @Override
-    protected WebexGroup constructModel(Set<Attribute> attributes, boolean isCreation) {
+    protected WebexGroup constructModel(Set<Attribute> attributes, Set<Attribute> multiValueAdd,
+                                        Set<Attribute> multiValueRemove, boolean isCreation) {
         WebexGroup group = new WebexGroup();
         group.setId(AdapterValueTypeConverter.getIdentityIdAttributeValue(attributes));
         group.setName(AdapterValueTypeConverter.getSingleAttributeValue(
