@@ -46,22 +46,14 @@ Configuration Properties below.
     your choosing
     - Store the code value from the http://localhost response URL returned.  This is the
     Authorization Code.
-
-### Configuration properties
-
-- CONNECTOR_BASE_CONFIGURATION_ACTIVE - set to Y to use this configuration
-- CONNECTOR_BASE_AUTH_OAUTH2_TOKEN_URL - likely use "https://webexapis.com/v1/access_token"
-- CONNECTOR_BASE_AUTH_OAUTH2_AUTHORIZATION_CODE - use the Authorization Code obtained above.
-- CONNECTOR_BASE_AUTH_OAUTH2_CLIENT_ID - use the ClientId from instructions above.
-- CONNECTOR_BASE_AUTH_OAUTH2_CLIENT_SECRET - use the ClientSecret from instructions above.
-- CONNECTOR_BASE_AUTH_OAUTH2_REDIRECT_URI - you can use "http://localhost" for this value
-- CONNECTOR_BASE_AUTH_OAUTH2_REFRESH_TOKEN - see Authentication section below
-for info on how to obtain RefreshToken from your Authorization Code
-
+    
 ### Development testing/usage links:
 - [Create and manage developer integrations](https://developer.webex.com)
 - [Webex Admin portal - Control Hub](https://admin.webex.com/overview)
 - [Admin API Documentation](https://developer.webex.com/docs/api/guides/admin-api)
+- [People API](https://developer.webex.com/docs/api/v1/people)
+- [Roles API](https://developer.webex.com/docs/api/v1/roles)
+
 
 ### Authentication
 
@@ -86,4 +78,16 @@ Implicit
 Resource Owner Password Credentials
 Client Credentials
 Webex Teams currently only supports Authorization Code, which is a grant flow used mostly with web applications to get access to an API.
+
+This connector uses OAuth2 RefreshToken, which was obtained using Authorization Code path.    
+
+### Configuration properties
+
+- service.serviceUrl - Normally set to `https://webexapis.com/v1`
+- security.authenticator.oauth2RefreshToken.tokenUrl - likely use "https://webexapis.com/v1/access_token"
+- security.authenticator.oauth2RefreshToken.clientId - use the ClientId from instructions above.
+- security.authenticator.oauth2RefreshToken.clientSecret - use the ClientSecret from instructions above.
+- security.authenticator.oauth2RefreshToken.redirectUri - you can use "http://localhost" for this value
+- security.authenticator.oauth2RefreshToken.refreshToken - see Authentication section below
+for info on how to obtain RefreshToken from your Authorization Code
 

@@ -239,4 +239,14 @@ public class WebexUser implements IdentityModel {
     public void setPhoneNumbers(List<String> phoneNumbers) {
         this.phoneNumbers = phoneNumbers;
     }
+
+    @Override
+    public boolean equals(Object input) {
+        return identityEquals(WebexUser.class, this, input);
+    }
+
+    @Override
+    public int hashCode() {
+        return identityHashCode();
+    }
 }

@@ -15,17 +15,17 @@ package com.exclamationlabs.connid.base.webex.model.response;
 
 import com.exclamationlabs.connid.base.webex.model.WebexGroup;
 
-import java.util.List;
+import java.util.Set;
 
 public class ListGroupsResponse {
 
-    private List<WebexGroup> items;
+    private Set<WebexGroup> items;
 
-    public List<WebexGroup> getItems() {
+    public Set<WebexGroup> getItems() {
         return items;
     }
 
-    public void setItems(List<WebexGroup> items) {
+    public void setItems(Set<WebexGroup> items) {
         this.items = items;
     }
 }

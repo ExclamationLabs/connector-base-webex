@@ -1,0 +1,12 @@
+---
+name: 'WebEx'
+configurationClass:
+  name: 'WebExConfiguration'
+  package: 'com.exclamationlabs.connid.base.webex.configuration'
+rest: true # io-error-retries
+service: true # service-url
+security:
+  authenticator:
+    oauth2RefreshToken: true
+
+

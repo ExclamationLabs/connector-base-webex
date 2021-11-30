@@ -16,12 +16,13 @@ package com.exclamationlabs.connid.base.webex.adapter;
 import com.exclamationlabs.connid.base.connector.adapter.AdapterValueTypeConverter;
 import com.exclamationlabs.connid.base.connector.adapter.BaseAdapter;
 import com.exclamationlabs.connid.base.connector.attribute.ConnectorAttribute;
+import com.exclamationlabs.connid.base.webex.configuration.WebExConfiguration;
 import com.exclamationlabs.connid.base.webex.model.WebexUser;
 import org.identityconnectors.framework.common.objects.Attribute;
 import org.identityconnectors.framework.common.objects.AttributeBuilder;
 import org.identityconnectors.framework.common.objects.ObjectClass;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -31,7 +32,7 @@ import static com.exclamationlabs.connid.base.webex.attribute.WebexUserAttribute
 import static org.identityconnectors.framework.common.objects.AttributeInfo.Flags.*;
 import static org.identityconnectors.framework.common.objects.AttributeInfo.Flags.NOT_CREATABLE;
 
-public class WebexUsersAdapter extends BaseAdapter<WebexUser> {
+public class WebexUsersAdapter extends BaseAdapter<WebexUser, WebExConfiguration> {
 
     @Override
     public ObjectClass getType() {
@@ -44,8 +45,8 @@ public class WebexUsersAdapter extends BaseAdapter<WebexUser> {
     }
 
     @Override
-    public List<ConnectorAttribute> getConnectorAttributes() {
-        List<ConnectorAttribute> result = new ArrayList<>();
+    public Set<ConnectorAttribute> getConnectorAttributes() {
+        Set<ConnectorAttribute> result = new HashSet<>();
         result.add(new ConnectorAttribute(USER_ID.name(), STRING, NOT_UPDATEABLE));
         result.add(new ConnectorAttribute(FIRST_NAME.name(), STRING));
         result.add(new ConnectorAttribute(LAST_NAME.name(), STRING));
@@ -69,8 +70,8 @@ public class WebexUsersAdapter extends BaseAdapter<WebexUser> {
     }
 
     @Override
-    protected List<Attribute> constructAttributes(WebexUser user) {
-        List<Attribute> attributes = new ArrayList<>();
+    protected Set<Attribute> constructAttributes(WebexUser user) {
+        Set<Attribute> attributes = new HashSet<>();
         attributes.add(AttributeBuilder.build(USER_ID.name(), user.getId()));
         attributes.add(AttributeBuilder.build(FIRST_NAME.name(), user.getFirstName()));
         attributes.add(AttributeBuilder.build(LAST_NAME.name(), user.getLastName()));
@@ -94,7 +95,8 @@ public class WebexUsersAdapter extends BaseAdapter<WebexUser> {
     }
 
     @Override
-    protected WebexUser constructModel(Set<Attribute> attributes, boolean isCreation) {
+    protected WebexUser constructModel(Set<Attribute> attributes, Set<Attribute> multiValueAdd,
+                                       Set<Attribute> multiValueRemove, boolean isCreation) {
         WebexUser user = new WebexUser();
         user.setId(AdapterValueTypeConverter.getIdentityIdAttributeValue(attributes));
 

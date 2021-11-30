@@ -5,3 +5,6 @@
 /out
 .DS_Store
 /custom
+/build
+/.gradle
+/generatedConfig

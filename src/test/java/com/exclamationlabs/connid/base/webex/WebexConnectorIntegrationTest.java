@@ -18,7 +18,7 @@ import com.exclamationlabs.connid.base.connector.test.IntegrationTest;
 import com.exclamationlabs.connid.base.connector.test.util.ConnectorTestUtils;
 import com.exclamationlabs.connid.base.webex.attribute.WebexGroupAttribute;
 import com.exclamationlabs.connid.base.webex.attribute.WebexUserAttribute;
-import com.exclamationlabs.connid.base.webex.configuration.WebexConfiguration;
+import com.exclamationlabs.connid.base.webex.configuration.WebExConfiguration;
 import org.apache.commons.lang3.StringUtils;
 import org.identityconnectors.framework.common.exceptions.AlreadyExistsException;
 import org.identityconnectors.framework.common.exceptions.InvalidAttributeValueException;
@@ -52,9 +52,15 @@ public class WebexConnectorIntegrationTest extends IntegrationTest {
     @Before
     public void setup() {
         connector = new WebexConnector();
-        setup(connector, new WebexConfiguration(getConfigurationName()));
+        setup(connector, new WebExConfiguration(getConfigurationName()));
 
     }
+
+    @Test
+    public void test005Test() {
+        connector.test();
+    }
+
 
     @Test(expected = InvalidAttributeValueException.class)
     public void test010UserCreateInvalid() {
@@ -122,12 +128,14 @@ public class WebexConnectorIntegrationTest extends IntegrationTest {
 
     @Test
     public void test120UserModify() {
-        Set<Attribute> attributes = new HashSet<>();
-        attributes.add(new AttributeBuilder().setName(WebexUserAttribute.FIRST_NAME.name()).addValue("Beta2").build());
-        attributes.add(new AttributeBuilder().setName(WebexUserAttribute.DISPLAY_NAME.name()).addValue("Beta2 Rubble").build());
-        Uid newId = connector.update(ObjectClass.ACCOUNT, new Uid(generatedUserId), attributes, new OperationOptionsBuilder().build());
-        assertNotNull(newId);
-        assertNotNull(newId.getUidValue());
+        Set<AttributeDelta> attributes = new HashSet<>();
+        attributes.add(new AttributeDeltaBuilder().setName(
+                WebexUserAttribute.FIRST_NAME.name()).addValueToReplace("Beta2").build());
+        attributes.add(new AttributeDeltaBuilder().setName(
+                WebexUserAttribute.DISPLAY_NAME.name()).addValueToReplace("Beta2 Rubble").build());
+        Set<AttributeDelta> response = connector.updateDelta(ObjectClass.ACCOUNT, new Uid(generatedUserId), attributes, new OperationOptionsBuilder().build());
+        assertNotNull(response);
+        assertTrue(response.isEmpty());
     }
 
     @Test
@@ -164,11 +172,11 @@ public class WebexConnectorIntegrationTest extends IntegrationTest {
 
     @Test(expected = PermissionDeniedException.class)
     public void test220GroupModify() {
-        Set<Attribute> attributes = new HashSet<>();
-        attributes.add(new AttributeBuilder().setName(WebexGroupAttribute.GROUP_NAME.name()).
-                addValue("Genesis2").build());
+        Set<AttributeDelta> attributes = new HashSet<>();
+        attributes.add(new AttributeDeltaBuilder().setName(WebexGroupAttribute.GROUP_NAME.name()).
+                addValueToReplace("Genesis2").build());
 
-        connector.update(ObjectClass.GROUP, new Uid(testGroupId), attributes, new OperationOptionsBuilder().build());
+        connector.updateDelta(ObjectClass.GROUP, new Uid(testGroupId), attributes, new OperationOptionsBuilder().build());
     }
 
     @Test
