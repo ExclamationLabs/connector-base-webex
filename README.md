@@ -85,8 +85,8 @@ This connector uses OAuth2 RefreshToken, which was obtained using Authorization 
 
 - service.serviceUrl - Normally set to `https://webexapis.com/v1`
 - security.authenticator.oauth2RefreshToken.tokenUrl - likely use "https://webexapis.com/v1/access_token"
-- security.authenticator.oauth2RefreshToken.clientId - use the ClientId from instructions above.
-- security.authenticator.oauth2RefreshToken.clientSecret - use the ClientSecret from instructions above.
+- security.authenticator.oauth2RefreshToken.clientId (optional, but needed for Webex) - use the ClientId from instructions above.
+- security.authenticator.oauth2RefreshToken.clientSecret (optional, but needed for Webex) - use the ClientSecret from instructions above.
 - security.authenticator.oauth2RefreshToken.redirectUri - you can use "http://localhost" for this value
 - security.authenticator.oauth2RefreshToken.refreshToken - see Authentication section below
 for info on how to obtain RefreshToken from your Authorization Code
