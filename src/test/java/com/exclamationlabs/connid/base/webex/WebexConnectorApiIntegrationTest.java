@@ -1,5 +1,5 @@
 /*
-    Copyright 2020 Exclamation Labs
+    Copyright 2022 Exclamation Labs
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -14,8 +14,8 @@
 package com.exclamationlabs.connid.base.webex;
 
 import com.exclamationlabs.connid.base.connector.configuration.ConfigurationNameBuilder;
-import com.exclamationlabs.connid.base.connector.test.IntegrationTest;
-import com.exclamationlabs.connid.base.connector.test.util.ConnectorTestUtils;
+import com.exclamationlabs.connid.base.connector.configuration.ConfigurationReader;
+import com.exclamationlabs.connid.base.connector.test.ApiIntegrationTest;
 import com.exclamationlabs.connid.base.webex.attribute.WebexGroupAttribute;
 import com.exclamationlabs.connid.base.webex.attribute.WebexUserAttribute;
 import com.exclamationlabs.connid.base.webex.configuration.WebExConfiguration;
@@ -24,20 +24,21 @@ import org.identityconnectors.framework.common.exceptions.AlreadyExistsException
 import org.identityconnectors.framework.common.exceptions.InvalidAttributeValueException;
 import org.identityconnectors.framework.common.exceptions.PermissionDeniedException;
 import org.identityconnectors.framework.common.objects.*;
+import org.identityconnectors.framework.common.objects.filter.EqualsFilter;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertNotNull;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class WebexConnectorIntegrationTest extends IntegrationTest {
-
-    private WebexConnector connector;
+public class WebexConnectorApiIntegrationTest extends
+        ApiIntegrationTest<WebExConfiguration, WebexConnector> {
 
     private static String generatedUserId;
 
@@ -45,31 +46,42 @@ public class WebexConnectorIntegrationTest extends IntegrationTest {
     private static final String testGroupId = "Y2lzY29zcGFyazovL3VzL1JPTEUvaWRfZnVsbF9hZG1pbg";
 
     @Override
-    public String getConfigurationName() {
-        return new ConfigurationNameBuilder().withConnector("WEBEX").build();
+    protected WebExConfiguration getConfiguration() {
+        return new WebExConfiguration(
+                new ConfigurationNameBuilder().withConnector("WEBEX").build()
+        );
+    }
+
+    @Override
+    protected Class<WebexConnector> getConnectorClass() {
+        return WebexConnector.class;
+    }
+
+    @Override
+    protected void readConfiguration(WebExConfiguration webExConfiguration) {
+        ConfigurationReader.setupTestConfiguration(webExConfiguration);
     }
 
     @Before
-    public void setup() {
-        connector = new WebexConnector();
-        setup(connector, new WebExConfiguration(getConfigurationName()));
-
+    public void testSetup() {
+        super.setup();
     }
 
     @Test
     public void test005Test() {
-        connector.test();
+        getConnectorFacade().test();
     }
 
-
     @Test(expected = InvalidAttributeValueException.class)
-    public void test010UserCreateInvalid() {
+    public void test010UserCreateInvalid()
+
+    {
         Set<Attribute> attributes = new HashSet<>();
         attributes.add(new AttributeBuilder().setName(WebexUserAttribute.FIRST_NAME.name()).addValue("Nada").build());
         attributes.add(new AttributeBuilder().setName(WebexUserAttribute.LAST_NAME.name()).addValue("Bad").build());
         attributes.add(new AttributeBuilder().setName(WebexUserAttribute.DISPLAY_NAME.name()).addValue("Nothing").build());
 
-        Uid newId = connector.create(ObjectClass.ACCOUNT, attributes, new OperationOptionsBuilder().build());
+        Uid newId = getConnectorFacade().create(ObjectClass.ACCOUNT, attributes, new OperationOptionsBuilder().build());
         assertNotNull(newId);
         assertNotNull(newId.getUidValue());
         generatedUserId = newId.getUidValue();
@@ -78,88 +90,79 @@ public class WebexConnectorIntegrationTest extends IntegrationTest {
     @Test
     public void test110UserCreate() {
         Set<Attribute> attributes = new HashSet<>();
-        attributes.add(new AttributeBuilder().setName(WebexUserAttribute.FIRST_NAME.name()).addValue("Beta24").build());
+        attributes.add(new AttributeBuilder().setName(WebexUserAttribute.FIRST_NAME.name()).addValue("Beta2").build());
         attributes.add(new AttributeBuilder().setName(WebexUserAttribute.LAST_NAME.name()).addValue("Rubble").build());
-        attributes.add(new AttributeBuilder().setName(WebexUserAttribute.DISPLAY_NAME.name()).addValue("Beta24 Rubble").build());
-
+        attributes.add(new AttributeBuilder().setName(WebexUserAttribute.DISPLAY_NAME.name()).addValue("Beta2 Rubble").build());
         attributes.add(new AttributeBuilder().setName(WebexUserAttribute.EMAILS.name()).
-                addValue(Collections.singletonList("connectors+beta24rubble@exclamationlabs.com")).build());
+                addValue(Collections.singletonList("connectors+beta2rubble@exclamationlabs.com")).build());
 
         attributes.add(new AttributeBuilder().setName(WebexUserAttribute.ROLES.name()).
                 addValue(Collections.singletonList(testGroupId)).build());
 
-        Uid newId = connector.create(ObjectClass.ACCOUNT, attributes, new OperationOptionsBuilder().build());
+        Uid newId = getConnectorFacade().create(ObjectClass.ACCOUNT, attributes, new OperationOptionsBuilder().build());
         assertNotNull(newId);
         assertNotNull(newId.getUidValue());
         generatedUserId = newId.getUidValue();
     }
 
-    @Test(expected=AlreadyExistsException.class)
+    @Test(expected= AlreadyExistsException.class)
     public void test112UserCreateAlreadyExists() {
         Set<Attribute> attributes = new HashSet<>();
-        attributes.add(new AttributeBuilder().setName(WebexUserAttribute.FIRST_NAME.name()).addValue("Beta24").build());
+        attributes.add(new AttributeBuilder().setName(WebexUserAttribute.FIRST_NAME.name()).addValue("Beta2").build());
         attributes.add(new AttributeBuilder().setName(WebexUserAttribute.LAST_NAME.name()).addValue("Rubble").build());
-        attributes.add(new AttributeBuilder().setName(WebexUserAttribute.DISPLAY_NAME.name()).addValue("Beta24 Rubble").build());
+        attributes.add(new AttributeBuilder().setName(WebexUserAttribute.DISPLAY_NAME.name()).addValue("Beta2 Rubble").build());
 
         attributes.add(new AttributeBuilder().setName(WebexUserAttribute.EMAILS.name()).
-                addValue(Collections.singletonList("connectors+betarubble@exclamationlabs.com")).build());
+                addValue(Collections.singletonList("connectors+beta2rubble@exclamationlabs.com")).build());
 
         attributes.add(new AttributeBuilder().setName(WebexUserAttribute.ROLES.name()).
                 addValue(Collections.singletonList(testGroupId)).build());
 
-        Uid newId = connector.create(ObjectClass.ACCOUNT, attributes, new OperationOptionsBuilder().build());
-        assertNotNull(newId);
-        assertNotNull(newId.getUidValue());
-        generatedUserId = newId.getUidValue();
+        getConnectorFacade().create(ObjectClass.ACCOUNT, attributes, new OperationOptionsBuilder().build());
     }
 
-    @Test(expected=InvalidAttributeValueException.class)
+    @Test(expected= InvalidAttributeValueException.class)
     public void test114UserCreateMissingEmail() {
         Set<Attribute> attributes = new HashSet<>();
         attributes.add(new AttributeBuilder().setName(WebexUserAttribute.FIRST_NAME.name()).addValue("Test").build());
         attributes.add(new AttributeBuilder().setName(WebexUserAttribute.LAST_NAME.name()).addValue("Rubble").build());
         attributes.add(new AttributeBuilder().setName(WebexUserAttribute.DISPLAY_NAME.name()).addValue("Test Rubble").build());
 
-        Uid newId = connector.create(ObjectClass.ACCOUNT, attributes, new OperationOptionsBuilder().build());
-        assertNotNull(newId);
-        assertNotNull(newId.getUidValue());
-        generatedUserId = newId.getUidValue();
+        getConnectorFacade().create(ObjectClass.ACCOUNT, attributes, new OperationOptionsBuilder().build());
     }
 
     @Test
     public void test120UserModify() {
         Set<AttributeDelta> attributes = new HashSet<>();
         attributes.add(new AttributeDeltaBuilder().setName(
-                WebexUserAttribute.FIRST_NAME.name()).addValueToReplace("Beta244").build());
+                WebexUserAttribute.FIRST_NAME.name()).addValueToReplace("Beta22").build());
         attributes.add(new AttributeDeltaBuilder().setName(
-                WebexUserAttribute.DISPLAY_NAME.name()).addValueToReplace("Beta244 Rubble").build());
-        Set<AttributeDelta> response = connector.updateDelta(ObjectClass.ACCOUNT, new Uid(generatedUserId), attributes, new OperationOptionsBuilder().build());
+                WebexUserAttribute.DISPLAY_NAME.name()).addValueToReplace("Beta22 Rubble").build());
+
+        Set<AttributeDelta> response = getConnectorFacade().updateDelta(ObjectClass.ACCOUNT, new Uid(generatedUserId),
+                attributes, new OperationOptionsBuilder().build());
+
         assertNotNull(response);
         assertTrue(response.isEmpty());
     }
 
     @Test
     public void test130UsersGet() {
-        List<String> idValues = new ArrayList<>();
-        List<String> nameValues = new ArrayList<>();
-        ResultsHandler resultsHandler = ConnectorTestUtils.buildResultsHandler(idValues, nameValues);
-
-        connector.executeQuery(ObjectClass.ACCOUNT, "", resultsHandler, new OperationOptionsBuilder().build());
-        assertTrue(idValues.size() >= 1);
-        assertTrue(StringUtils.isNotBlank(idValues.get(0)));
-        assertTrue(StringUtils.isNotBlank(nameValues.get(0)));
+        results = new ArrayList<>();
+        getConnectorFacade().search( ObjectClass.ACCOUNT, null, getHandler(), new OperationOptionsBuilder().build());
+        assertTrue(getResults().size() >= 1);
     }
 
     @Test
     public void test140UserGet() {
-        List<String> idValues = new ArrayList<>();
-        List<String> nameValues = new ArrayList<>();
-        ResultsHandler resultsHandler = ConnectorTestUtils.buildResultsHandler(idValues, nameValues);
-
-        connector.executeQuery(ObjectClass.ACCOUNT, generatedUserId, resultsHandler, new OperationOptionsBuilder().build());
-        assertEquals(1, idValues.size());
-        assertTrue(StringUtils.isNotBlank(idValues.get(0)));
+        results = new ArrayList<>();
+        Attribute idAttribute = new AttributeBuilder().setName(Uid.NAME).addValue(generatedUserId).build();
+        getConnectorFacade().search( ObjectClass.ACCOUNT, new EqualsFilter(idAttribute),
+                getHandler(), new OperationOptionsBuilder().build());
+        assertEquals(1, getResults().size());
+        assertTrue(StringUtils.isNotBlank(getResults().get(0).getUid().getUidValue()));
     }
+
 
     @Test(expected = PermissionDeniedException.class)
     public void test210GroupCreate() {
@@ -167,7 +170,8 @@ public class WebexConnectorIntegrationTest extends IntegrationTest {
         attributes.add(new AttributeBuilder().setName(WebexGroupAttribute.GROUP_NAME.name()).
                 addValue("Genesis").build());
 
-        connector.create(ObjectClass.GROUP, attributes, new OperationOptionsBuilder().build());
+        getConnectorFacade().create(ObjectClass.GROUP,
+                attributes, new OperationOptionsBuilder().build());
     }
 
     @Test(expected = PermissionDeniedException.class)
@@ -176,42 +180,38 @@ public class WebexConnectorIntegrationTest extends IntegrationTest {
         attributes.add(new AttributeDeltaBuilder().setName(WebexGroupAttribute.GROUP_NAME.name()).
                 addValueToReplace("Genesis2").build());
 
-        connector.updateDelta(ObjectClass.GROUP, new Uid(testGroupId), attributes, new OperationOptionsBuilder().build());
+        getConnectorFacade().updateDelta(
+                ObjectClass.GROUP, new Uid(testGroupId), attributes, new OperationOptionsBuilder().build());
     }
 
     @Test
     public void test230GroupsGet() {
-        List<String> idValues = new ArrayList<>();
-        List<String> nameValues = new ArrayList<>();
-        ResultsHandler resultsHandler = ConnectorTestUtils.buildResultsHandler(idValues, nameValues);
-
-        connector.executeQuery(ObjectClass.GROUP, "", resultsHandler, new OperationOptionsBuilder().build());
-        assertTrue(idValues.size() >= 1);
-        assertTrue(StringUtils.isNotBlank(idValues.get(0)));
-        assertTrue(StringUtils.isNotBlank(nameValues.get(0)));
+        results = new ArrayList<>();
+        getConnectorFacade().search(
+                ObjectClass.GROUP, null, getHandler(), new OperationOptionsBuilder().build());
+        assertTrue(results.size() >= 1);
+        assertTrue(StringUtils.isNotBlank(getResults().get(0).getUid().getUidValue()));
+        assertTrue(StringUtils.isNotBlank(getResults().get(0).getName().getNameValue()));
     }
 
     @Test
     public void test240GroupGet() {
-        List<String> idValues = new ArrayList<>();
-        List<String> nameValues = new ArrayList<>();
-        ResultsHandler resultsHandler = ConnectorTestUtils.buildResultsHandler(idValues, nameValues);
-
-        connector.executeQuery(ObjectClass.GROUP, testGroupId, resultsHandler, new OperationOptionsBuilder().build());
-
-        assertEquals(1, idValues.size());
-        assertTrue(StringUtils.isNotBlank(idValues.get(0)));
-        assertTrue(StringUtils.isNotBlank(nameValues.get(0)));
+        Attribute idAttribute = new AttributeBuilder().setName(Uid.NAME).addValue(testGroupId).build();
+        getConnectorFacade().search(
+                ObjectClass.GROUP, new EqualsFilter(idAttribute), getHandler(),
+                new OperationOptionsBuilder().build());
+        assertEquals(1, getResults().size());
+        assertTrue(StringUtils.isNotBlank(getResults().get(0).getUid().getUidValue()));
+        assertTrue(StringUtils.isNotBlank(getResults().get(0).getName().getNameValue()));
     }
 
     @Test(expected = PermissionDeniedException.class)
     public void test290GroupDelete() {
-        connector.delete(ObjectClass.GROUP, new Uid(testGroupId), new OperationOptionsBuilder().build());
+        getConnectorFacade().delete(ObjectClass.GROUP, new Uid(testGroupId), new OperationOptionsBuilder().build());
     }
 
     @Test
     public void test390UserDelete() {
-        connector.delete(ObjectClass.ACCOUNT, new Uid(generatedUserId), new OperationOptionsBuilder().build());
+        getConnectorFacade().delete(ObjectClass.ACCOUNT, new Uid(generatedUserId), new OperationOptionsBuilder().build());
     }
-
 }
